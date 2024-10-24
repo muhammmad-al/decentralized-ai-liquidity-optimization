@@ -8,6 +8,11 @@ url = 'https://gateway.thegraph.com/api/3c93f56916d32c29dc6780920c95d19a/subgrap
 # GraphQL query to fetch daily historical TVL for the ETH/USDC pair over the past 7 days
 query = """
 {
+  pool(id: "0x8ad599c3a0ff1de082011efddc58f1908eb6e6d8") {
+    totalValueLockedToken0
+    totalValueLockedToken1
+    liquidity
+  }
   poolDayDatas(
     first: 7,
     orderBy: date,
@@ -38,7 +43,16 @@ def fetch_historical_data():
     #check if the response is JSON-formatted
     if response.headers.get('Content-Type') == 'application/json':
       data = response.json()
+      pool_data = data.get('data', {}).get('pool', {})
       pool_day_data = data.get('data', {}).get('poolDayDatas', [])
+
+      if pool_data:
+                total_locked_token0 = float(pool_data['totalValueLockedToken0'])
+                total_locked_token1 = float(pool_data['totalValueLockedToken1'])
+                liquidity = float(pool_data['liquidity'])
+                print(f"Current Total Value Locked (TVL) for USDC: {total_locked_token0:,.2f}, "
+                      f"ETH: {total_locked_token1:,.2f}, Liquidity: {liquidity:,.2f}")
+                      
       if pool_day_data:
         print("\nHistorical TVL (Last 7 Days):")
         for entry in pool_day_data:
