@@ -16,11 +16,16 @@ query = """
   ) {
     date
     tvlUSD
+    volumeToken0
+    volumeToken1
+    volumeUSD
+    token0Price
+    token1Price
   }
 }
 """
 
-def fetch_historical_tvl():
+def fetch_historical_data():
   headers = {'Content-Type': 'application/json'}
   try:
     response = requests.post(url, json={'query': query}, headers=headers)
@@ -38,7 +43,18 @@ def fetch_historical_tvl():
         for entry in pool_day_data:
           date = datetime.utcfromtimestamp(entry['date']).strftime('%Y-%m-%d')
           tvl_usd = float(entry['tvlUSD'])
-          print(f"Date: {date}, TVL in USD: ${tvl_usd:,.2f}")
+          volume_token0 = float(entry['volumeToken0'])
+          volume_token1 = float(entry['volumeToken1'])
+          volume_usd = float(entry['volumeUSD'])
+          eth_price_in_usdc = float(entry['token0Price'])
+          usdc_price_in_eth = float(entry['token1Price'])
+          
+          print(f"Date: {date}, TVL in USD: ${tvl_usd:,.2f}, "
+                          f"Volume USDC: {volume_token0:,.2f}, "
+                          f"Volume ETH: {volume_token1:,.2f}, "
+                          f"Volume in USD: ${volume_usd:,.2f}, "
+                          f"ETH Price (in USDC): ${eth_price_in_usdc:.2f}, "
+                          f"USDC Price (in ETH): {usdc_price_in_eth:.6f} ETH")
       else:
         print("No historical data found for the ETH/USDC pool.")
     else:
@@ -49,4 +65,4 @@ def fetch_historical_tvl():
     print(f"Other error occured: {err}")
         
 if __name__ == "__main__":
-    fetch_historical_tvl()
+    fetch_historical_data()
