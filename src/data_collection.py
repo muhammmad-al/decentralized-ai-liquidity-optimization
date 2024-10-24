@@ -21,6 +21,7 @@ query = """
     volumeUSD
     token0Price
     token1Price
+    feesUSD
   }
 }
 """
@@ -48,13 +49,16 @@ def fetch_historical_data():
           volume_usd = float(entry['volumeUSD'])
           eth_price_in_usdc = float(entry['token0Price'])
           usdc_price_in_eth = float(entry['token1Price'])
+          fees_usd = float(entry['feesUSD'])
+          
           
           print(f"Date: {date}, TVL in USD: ${tvl_usd:,.2f}, "
                           f"Volume USDC: {volume_token0:,.2f}, "
                           f"Volume ETH: {volume_token1:,.2f}, "
                           f"Volume in USD: ${volume_usd:,.2f}, "
                           f"ETH Price (in USDC): ${eth_price_in_usdc:.2f}, "
-                          f"USDC Price (in ETH): {usdc_price_in_eth:.6f} ETH")
+                          f"USDC Price (in ETH): {usdc_price_in_eth:.6f} ETH, "
+                          f"Fees in USD: ${fees_usd:,.2f}")
       else:
         print("No historical data found for the ETH/USDC pool.")
     else:
